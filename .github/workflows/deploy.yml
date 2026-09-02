@@ -1,120 +1,39 @@
-name: Deploy React para Hospedagem Hostgator
+name: Deploy React para Hostgator
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     name: 🏗️ Build & 🚀 Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v4
+    - name: 🚚 Obter código mais recente
+      uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
+    - name: 🟢 Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
 
-      # =========================================================
-      # 1) VALIDAÇÃO DE SECRETS — evita buildar com vazios
-      # =========================================================
-      - name: ✅ Validar secrets obrigatórios
-        shell: bash
-        run: |
-          FAILED=0
-          echo "::group::🔍 Checando secrets..."
-          for VAR in FTP_SERVER FTP_USERNAME FTP_PASSWORD VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY; do
-            VAL="${!VAR}"
-            if [ -z "$VAL" ]; then
-              echo "  ❌ $VAR — (VAZIO / não definido)"
-              FAILED=1
-            else
-              # Esconde o valor real no log
-              if [[ "$VAR" == FTP_* ]] || [[ "$VAR" == *KEY* ]] || [[ "$VAR" == *SECRET* ]]; then
-                MASKED="${VAL:0:2}***${VAL: -2}"
-                echo "  ✅ $VAR — definido ($MASKED)"
-              else
-                echo "  ✅ $VAR — definido (${VAL:0:30}...)"
-              fi
-            fi
-          done
-          echo "::endgroup::"
-          if [ "$FAILED" -ne 0 ]; then
-            echo ""
-            echo "❌ Cadastre os secrets acima em: GitHub → Settings → Secrets and variables → Actions → New repository secret"
-            exit 1
-          fi
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+    - name: 📦 Instalar dependências
+      run: npm ci
 
-      - name: 📦 Install dependencies
-        run: npm ci
+    - name: 🛠️ Build do Projeto
+      run: npm run build
 
-      # =========================================================
-      # 2) ARQUIVO .env.production COM VALORES REAIS DOS SECRETS
-      # =========================================================
-      - name: 🔒 Criar .env.production
-        shell: bash
-        run: |
-          cat > .env.production <<'EOF'
-          VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          EOF
-          echo "✅ .env.production criado com sucesso."
-          echo "  VITE_SUPABASE_URL      prefixo = $(echo -n "${{ secrets.VITE_SUPABASE_URL }}" | head -c 30)..."
-          echo "  VITE_SUPABASE_ANON_KEY prefixo = $(echo -n "${{ secrets.VITE_SUPABASE_ANON_KEY }}" | head -c 15)..."
-
-      - name: 🛠️ Build Project (Vite)
-        run: npm run build
-
-      - name: 📄 Verificar saída do build
-        shell: bash
-        run: |
-          set -e
-          echo "::group::📦 Estrutura da pasta dist"
-          find ./dist -maxdepth 3 -type f | sort
-          echo "::endgroup::"
-          echo ""
-          echo "::group::🔗 assets referenciados no index.html (caminhos)"
-          if command -v grep >/dev/null 2>&1; then
-            grep -oE '(src|href)="[^"]+"' ./dist/index.html || true
-          fi
-          echo "::endgroup::"
-          if [ ! -f "./dist/index.html" ]; then echo "❌ index.html não encontrado!"; exit 1; fi
-          if [ ! -d "./dist/assets" ]; then echo "❌ pasta assets não encontrada!"; exit 1; fi
-
-      # =========================================================
-      # 3) UPLOAD SOMENTE DO ./dist/ PARA A HOSPEDAGEM
-      # =========================================================
-      - name: 📂 Sync Dist → Hostgator FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: ./gerador.eixoconsorcios.com.br/
-          # dangerous-clean-slate = true APAGA os arquivos antigos
-          # CUIDADO: ative SOMENTE se tiver CERTEZA que server-dir está correto!
-          # Para manter arquivos antigos (ex: logs, emails, etc), deixe false.
-          dangerous-clean-slate: false
-          log-level: standard
-          protocol: ftps   # FTP over TLS (padrão Hostgator)
-          # Se o seu Hostgator só aceitar FTP plaintext sem TLS, troque para:
-          # protocol: ftp
-          # e adicione: port: 21
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.env
-            **.env.*
-            **/deploy.yml
+    - name: 📂 Sincronizar Dist com o Servidor
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./dist/
+        server-dir: ./gerador.eixoconsorcios.com.br/
+        dangerous-clean-slate: true
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
