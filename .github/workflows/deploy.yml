@@ -21,7 +21,20 @@ jobs:
     - name: 📦 Instalar dependências
       run: npm ci
 
-    - name: 🛠️ Build do Projeto
+    - name: � Criar .env.production com variáveis do Supabase
+      env:
+        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+        VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      run: |
+        cat > .env.production <<EOF
+        VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+        EOF
+        echo "✅ .env.production criado:"
+        echo "  VITE_SUPABASE_URL      = $(echo -n "$VITE_SUPABASE_URL" | head -c 30)..."
+        echo "  VITE_SUPABASE_ANON_KEY = $(echo -n "$VITE_SUPABASE_ANON_KEY" | head -c 15)..."
+
+    - name: �🛠️ Build do Projeto
       run: npm run build
 
     - name: 📂 Sincronizar Dist com o Servidor
