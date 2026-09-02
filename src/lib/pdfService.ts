@@ -830,7 +830,7 @@ export async function generateProposalPdfFromData(params: {
     pdf.setDocumentProperties({
       title: `Proposta ${dados.numero_referencia} — ${dados.nome_cliente}`,
       subject: 'Proposta de Consórcio',
-      author: dados.marca.nome || 'Consórcio Pro',
+      author: dados.marca.nome || 'Eixo',
       keywords: ['consórcio', 'proposta', dados.marca.nome, dados.segmento.nome].join(', '),
     });
 

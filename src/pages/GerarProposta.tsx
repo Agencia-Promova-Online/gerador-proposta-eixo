@@ -15,6 +15,7 @@ import {
   Lock, ArrowRight, ArrowLeft, Check, Loader2, Building2, Layers,
   User, DollarSign, Calendar, FileCheck, AlertCircle, CheckCircle2, Home, RefreshCw
 } from 'lucide-react';
+import logo from "../assets/favicon.png"
 
 type Step = 'marca' | 'segmento' | 'dados' | 'revisao' | 'sucesso';
 
@@ -201,12 +202,18 @@ export default function GerarProposta({ onNavigate }: Props) {
             onClick={() => onNavigate('home')}
             className="flex items-center gap-3 group"
           >
-            <div className="w-9 h-9 rounded-xl bg-ink-900 flex items-center justify-center group-hover:bg-gold-500 transition-colors">
-              <Home className="w-4.5 h-4.5 text-gold-500 group-hover:text-white" />
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 flex items-center justify-center">
+            <img src={logo} height="10px" />
             </div>
+            <div>
+              <h1 className="font-display font-semibold text-ink-900 text-sm tracking-tight">Eixo</h1>
+              <p className="text-[10px] text-ink-400 -mt-0.5">Gerador de Propostas</p>
+            </div>
+          </div>
             <div className="text-left">
-              <h1 className="font-display font-semibold text-ink-900 text-sm tracking-tight">Consórcio Pro</h1>
-              <p className="text-[10px] text-ink-400 -mt-0.5">Nova proposta</p>
+              <h1 className="font-display font-semibold text-ink-900 text-sm tracking-tight">Eixo</h1>
+              <p className="text-[10px] text-ink-400 -mt-0.5">Gerador de Propostas</p>
             </div>
           </button>
 
@@ -649,11 +656,17 @@ export default function GerarProposta({ onNavigate }: Props) {
       <footer className="border-t border-ink-100 bg-white mt-16">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-ink-900 flex items-center justify-center">
-              <Building2 className="w-3.5 h-3.5 text-gold-500" />
+            <div className="flex items-center gap-3">
+            <div className="h-9 w-9 flex items-center justify-center">
+            <img src={logo} height="10px" />
             </div>
+            <div>
+              <h1 className="font-display font-semibold text-ink-900 text-sm tracking-tight">Eixo</h1>
+              <p className="text-[10px] text-ink-400 -mt-0.5">Gerador de Propostas</p>
+            </div>
+          </div>
             <span className="text-xs text-ink-500 font-medium">
-              Consórcio Pro © {new Date().getFullYear()} — Sistema de Propostas
+              Eixo © {new Date().getFullYear()} — Sistema de Propostas
             </span>
           </div>
           <button

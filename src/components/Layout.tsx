@@ -59,7 +59,7 @@ export default function Layout({ children, currentPage, onNavigate, onPublicNavi
             <Building2 className="w-5 h-5 text-white" />
           </div>
           <div className="min-w-0">
-            <h2 className="font-display font-semibold text-sm truncate">Consórcio Pro</h2>
+            <h2 className="font-display font-semibold text-sm truncate">Eixo</h2>
             <p className="text-xs text-ink-400 truncate">Área administrativa</p>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default function Layout({ children, currentPage, onNavigate, onPublicNavi
           >
             <Menu className="w-5 h-5" />
           </button>
-          <span className="font-display font-semibold text-sm">Consórcio Pro</span>
+          <span className="font-display font-semibold text-sm">Eixo</span>
           <div className="w-8" />
         </header>
 

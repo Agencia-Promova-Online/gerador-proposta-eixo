@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import {
   Building2, Lock, Mail, Eye, EyeOff, Loader2, ArrowLeft, ShieldAlert
 } from 'lucide-react';
+import logo from "../assets/favicon.png"
 
 interface LoginProps {
   onLoggedIn?: () => void;
@@ -82,10 +83,10 @@ export default function Login({ onLoggedIn, onNavigate }: LoginProps) {
 
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gold-500 mb-4 shadow-lg shadow-gold-500/20">
-            <Building2 className="w-8 h-8 text-white" />
+              <img src={logo} height="10px"/>
           </div>
           <h1 className="font-display text-2xl font-semibold text-white tracking-tight">
-            Consórcio Pro
+           Eixo
           </h1>
           <p className="text-ink-300 text-sm mt-1.5">Acesso administrativo</p>
         </div>
