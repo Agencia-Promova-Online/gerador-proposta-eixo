@@ -42,7 +42,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: ./gerador.eixoconsorcio.com.br/
+          server-dir: ./gerador.eixoconsorcios.com.br/
           dangerous-clean-slate: false
           log-level: standard
           exclude: |
