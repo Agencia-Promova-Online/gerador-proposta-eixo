@@ -1,14 +1,48 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrlRaw = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKeyRaw = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
+const supabaseUrl = typeof supabaseUrlRaw === 'string' ? supabaseUrlRaw.trim() : '';
+const supabaseAnonKey = typeof supabaseAnonKeyRaw === 'string' ? supabaseAnonKeyRaw.trim() : '';
+
+// Inicialização ROBUSTA: se as variáveis de ambiente não forem definidas,
+// loga um aviso no console e retorna um objeto stub, evitando "tela branca"
+// (crash na montagem do React). O usuário vê uma mensagem amigável em tela.
+let client: SupabaseClient<any, 'public', any>;
+try {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error(
+      '[supabase] ⚠️ VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY não estão definidas no ambiente.\n' +
+      `  VITE_SUPABASE_URL="${supabaseUrl ? '********' : '(vazia)'}"\n` +
+      `  VITE_SUPABASE_ANON_KEY="${supabaseAnonKey ? 'pk_****...' : '(vazia)'}"`
+    );
+  }
+  // Passa os valores (mesmo vazios, com try/catch externo para não estourar).
+  // createClient exige url e key, mas em ambientes sem variáveis nós usamos
+  // placeholders e deixamos o app mostrar a tela de "configuração pendente".
+  client = createClient(
+    supabaseUrl || 'https://placeholder.supabase.co',
+    supabaseAnonKey || 'placeholder-anon-key',
+    {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    }
+  );
+} catch (err: any) {
+  console.error('[supabase] ❌ Falha ao inicializar cliente:', err?.message ?? err);
+  // fallback: cria um cliente apontando para placeholder (nunca dispara crash no import)
+  client = createClient('https://placeholder.supabase.co', 'placeholder-anon-key', {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+export const supabase = client;
+
+export function isSupabaseConfigured(): boolean {
+  return !!supabaseUrl && !!supabaseAnonKey && !supabaseUrl.includes('placeholder');
+}
 
 export interface UsuarioPerfil {
   id: string;
