@@ -211,10 +211,7 @@ export default function GerarProposta({ onNavigate }: Props) {
               <p className="text-[10px] text-ink-400 -mt-0.5">Gerador de Propostas</p>
             </div>
           </div>
-            <div className="text-left">
-              <h1 className="font-display font-semibold text-ink-900 text-sm tracking-tight">Eixo</h1>
-              <p className="text-[10px] text-ink-400 -mt-0.5">Gerador de Propostas</p>
-            </div>
+           
           </button>
 
           <div className="flex items-center gap-2">
