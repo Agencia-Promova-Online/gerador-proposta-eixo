@@ -105,7 +105,7 @@ export default function AdminDashboard({
             <EmptyState
               icon={Percent}
               title="Nenhuma taxa cadastrada"
-              message="Comece cadastrando uma marca, segmento e depois uma tabela de taxas."
+              message="Comece cadastrando as marcas, segmento e depois uma tabela de taxas."
             />
           ) : (
             <div className="space-y-2">
